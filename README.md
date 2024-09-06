@@ -5,7 +5,7 @@
 ## Syntax
 
 ```stata
-ventsim depvar, dvar(varname) mvar(varname) lvar(varlist) d(#) dstar(#) m(#) mreg(string) yreg(string) lreg(string) nsim(integer) [options]
+ventsim depvar, dvar(varname) mvar(varname) lvars(varlist) d(#) dstar(#) m(#) mreg(string) yreg(string) lregs(string) nsim(integer) [options]
 ```
 
 ### Required Arguments
@@ -13,7 +13,7 @@ ventsim depvar, dvar(varname) mvar(varname) lvar(varlist) d(#) dstar(#) m(#) mre
 - `depvar`: Specifies the outcome variable.
 - `dvar(varname)`: Specifies the treatment (exposure) variable.
 - `mvar(varname)`: Specifies the mediator variable.
-- `lvar(varlist)`: Specifies the post-treatment covariates (exposure-induced confounders).
+- `lvars(varlist)`: Specifies the post-treatment covariates (exposure-induced confounders).
 - `d(#)`: Reference level of treatment.
 - `dstar(#)`: Alternative level of treatment.
 - `m(#)`: Level of the mediator at which the controlled direct effect is evaluated.
@@ -22,13 +22,13 @@ ventsim depvar, dvar(varname) mvar(varname) lvar(varlist) d(#) dstar(#) m(#) mre
 
 - `mreg(string)`: Specifies the regression model for the mediator. 
 - `yreg(string)`: Specifies the regression model for the outcome.
-- `lreg(string)`: Specifies the regression models for the exposure-induced confounders.
+- `lregs(string)`: Specifies the regression models for the exposure-induced confounders.
 
 Options include `regress`, `logit`, or `poisson`.
 
 ### Options
 
-- `cvar(varlist)`: Specifies the baseline covariates to be included in the analysis.
+- `cvars(varlist)`: Specifies the baseline covariates to be included in the analysis.
 - `nointer`: Specifies whether treatment-mediator interactions should be included in the outcome model.
 - `cxd`: Includes treatment-covariate interactions in all models.
 - `cxm`: Includes mediator-covariate interactions in the outcome model.
@@ -38,12 +38,12 @@ Options include `regress`, `logit`, or `poisson`.
 - `cluster(varname)`: Identifies resampling clusters for the bootstrap.
 - `level(cilevel)`: Confidence level for constructing bootstrap confidence intervals (default is 95%).
 - `seed(passthru)`: Seed for bootstrap resampling.
-- `detail`: Prints the fitted models for mediator, outcome, and exposure.
+- `detail`: Prints the fitted models for mediator, outcome, and exposure-induced confounders.
 
 ## Description
 
-`ventsim` fir several models to construct effect estimates:
-1. Models for each exposure-induced confounder.
+`ventsim` fits several models to construct effect estimates:
+1. A model for each exposure-induced confounder.
 2. A model for the mediator conditional on treatment and the baseline covariates.
 3. A model for the outcome conditional on treatment, the mediator, baseline covariates, and exposure-induced confounders.
 
@@ -56,13 +56,13 @@ These models are used to simulate potential outcomes, which are in turn used to 
 use nlsy79.dta
 
 // Default settings, single binary exposure-induced confounder
-ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit) nointer nsim(200) reps(200)
+ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539) cvars(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit) nointer nsim(200)
 
 // Single binary exposure-induced confounder, include all interactions
-ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit) cxd cxm lxm nsim(200) reps(200)
+ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539) cvars(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit) cxd cxm lxm nsim(200)
 
 // Multiple exposure-induced confounders (the first modeled with logit and second with regress)
-ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539 cesd_92) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit regress) nsim(200) reps(200)
+ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539 cesd_92) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit regress) nsim(200)
 ```
 
 ## Saved Results
