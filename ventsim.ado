@@ -8,18 +8,18 @@ program define ventsim, eclass
 
 	version 15	
 
-	syntax varname(numeric) [if][in] [pweight], ///
+	syntax varlist(min=1 max=1 numeric) [if][in] [pweight], ///
 		dvar(varname numeric) ///
 		mvar(varname numeric) ///
-		lvar(varlist numeric) ///
+		lvars(varlist numeric) ///
 		d(real) ///
 		dstar(real) ///
 		m(real) ///
 		mreg(string) ///
 		yreg(string) ///
-		lreg(string) ///
+		lregs(string) ///
 		[nsim(integer 200)] ///
-		[cvar(varlist numeric)] ///
+		[cvars(varlist numeric)] ///
 		[NOINTERaction] ///
 		[cxd] ///
 		[cxm] ///
@@ -40,9 +40,9 @@ program define ventsim, eclass
 	
 	if ("`detail'" != "") {		
 		ventsimbs `varlist' [`weight' `exp'] if `touse' , ///
-			dvar(`dvar') mvar(`mvar') lvar(`lvar') cvar(`cvar') ///
+			dvar(`dvar') mvar(`mvar') lvars(`lvars') cvars(`cvars') ///
 			d(`d') dstar(`dstar') m(`m') ///
-			mreg(`mreg') yreg(`yreg') lreg(`lreg') /// 
+			mreg(`mreg') yreg(`yreg') lregs(`lregs') /// 
 			nsim(1) `nointeraction' `cxd' `cxm' `lxm'
 		}
 		
@@ -51,9 +51,9 @@ program define ventsim, eclass
 			reps(`reps') strata(`strata') cluster(`cluster') level(`level') `seed' ///
 			saving(`saving', replace) noheader notable: ///
 			ventsimbs `varlist' if `touse' [`weight' `exp'], ///
-			dvar(`dvar') mvar(`mvar') lvar(`lvar') cvar(`cvar') ///
+			dvar(`dvar') mvar(`mvar') lvars(`lvars') cvars(`cvars') ///
 			d(`d') dstar(`dstar') m(`m') ///
-			mreg(`mreg') yreg(`yreg') lreg(`lreg') ///
+			mreg(`mreg') yreg(`yreg') lregs(`lregs') ///
 			nsim(`nsim') `nointeraction' `cxd' `cxm'
 			}
 
@@ -62,9 +62,9 @@ program define ventsim, eclass
 			reps(`reps') strata(`strata') cluster(`cluster') level(`level') `seed' ///
 			noheader notable: ///
 			ventsimbs `varlist' if `touse' [`weight' `exp'], ///
-			dvar(`dvar') mvar(`mvar') lvar(`lvar') cvar(`cvar') ///
+			dvar(`dvar') mvar(`mvar') lvars(`lvars') cvars(`cvars') ///
 			d(`d') dstar(`dstar') m(`m') ///
-			mreg(`mreg') yreg(`yreg') lreg(`lreg') ///
+			mreg(`mreg') yreg(`yreg') lregs(`lregs') ///
 			nsim(`nsim') `nointeraction' `cxd' `cxm'
 			}
 

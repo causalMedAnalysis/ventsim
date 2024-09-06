@@ -16,15 +16,25 @@
 {cmd:ventsim} {depvar} {ifin} [{it:{help weight:pweight}}] {cmd:,} 
 {cmdab:dvar(}{it:{help varname:varname}}{cmd:)}
 {cmdab:mvar(}{it:{help varname:varname}}{cmd:)}
-{cmdab:lvar(}{it:{help varlist:varlist}}{cmd:)}
-d(#) dstar(#) m(#) 
-mreg(string) yreg(string) lreg(string) nsim(integer) 
-[{cmdab:cvar(}{it:{help varlist:varlist}}{cmd:)} 
-{opt nointer:action} {opt cxd} {opt cxm} {opt lxm} 
+{cmdab:lvars(}{it:{help varlist:varlist}}{cmd:)}
+{opt d(#)} 
+{opt dstar(#)} 
+{opt m(#)} 
+{opt mreg(string)} 
+{opt yreg(string)} 
+{opt lregs(string)} 
+{opt nsim(integer)} 
+{cmdab:cvars(}{it:{help varlist:varlist}}{cmd:)} 
+{opt nointer:action} 
+{opt cxd} 
+{opt cxm} 
+{opt lxm} 
 {opt reps(integer)} 
 {cmdab:strata(}{it:{help varname:varname}}{cmd:)}
 {cmdab:cluster(}{it:{help varname:varname}}{cmd:)}
-{opt level(cilevel)} {opt seed(passthru)} {opt detail}]
+{opt level(cilevel)} 
+{opt seed(passthru)} 
+{opt detail}
 
 
 {p2coldent:* {opt depvar}}specify the outcome variable.{p_end}
@@ -33,7 +43,7 @@ mreg(string) yreg(string) lreg(string) nsim(integer)
 
 {p2coldent:* {opt mvar}{cmd:(}{it:varname}{cmd:)}}specify the mediator variable.
 
-{p2coldent:* {opt lvar}{cmd:(}{it:varlist}{cmd:)}}specify the post-treatment covariates (i.e., exposure-induced 
+{p2coldent:* {opt lvars}{cmd:(}{it:varlist}{cmd:)}}specify the post-treatment covariates (i.e., exposure-induced 
 confounders) to be included in the analysis, which may be continuous, binary (0/1), or counts.
 
 {p2coldent:* {opt d}{cmd:(}{it:#}{cmd:)}}set the reference level of treatment.{p_end}
@@ -45,27 +55,27 @@ is evaluated. If there is no treatment-mediator interaction, then the controlled
 is the same at all levels of the mediator and thus an arbitary value can be chosen.{p_end}
 
 {p2coldent:* {opt mreg}{cmd:(}{it:string}{cmd:)}}specify the form of regression model to be estimated for the mediator. 
-Options are {opt reg:ress}, {opt log:it}, or {opt poi:sson}.{p_end}
+Options are {opt regress}, {opt logit}, or {opt poisson}.{p_end}
 
 {p2coldent:* {opt yreg}{cmd:(}{it:string}{cmd:)}}specify the form of regression model to be estimated for the outcome. 
-Options are {opt reg:ress}, {opt log:it}, or {opt poi:sson}.{p_end}
+Options are {opt regress}, {opt logit}, or {opt poisson}.{p_end}
 
-{p2coldent:* {opt lreg}{cmd:(}{it:string}{cmd:)}}specify the form of the regression models to be estimated for the 
+{p2coldent:* {opt lregs}{cmd:(}{it:string}{cmd:)}}specify the form of the regression models to be estimated for the 
 exposure-induced confounders. If there are multiple exposure-induced confounders, a list of models must be supplied.
 The order of the models supplied in this list should correspond to the order of the confounders supplied in {opt lvar}{cmd:(}{it:varlist}{cmd:)}}. 
-Options are {opt reg:ress}, {opt log:it}, or {opt poi:sson}.{p_end}
+Options are {opt regress}, {opt logit}, or {opt poisson}.{p_end}
 
 {title:Options}
 
 {synopt:{opt nsim(integer)}}specify the number of simulated values generated for the potential outcomes (the default is 200). {p_end}
 
-{synopt:{opt cvar}{cmd:(}{it:varlist}{cmd:)}}specify the baseline covariates to be included in the analysis. {p_end}
+{synopt:{opt cvars}{cmd:(}{it:varlist}{cmd:)}}specify the baseline covariates to be included in the analysis. {p_end}
 
 {synopt:{opt cat}{cmd:(}{it:varlist}{cmd:)}}specify which of the {cmd: cvars} and {cmd: lvars} should be handled as categorical variables. {p_end}
 
 {synopt:{opt nointer:action}}specify that a treatment-mediator interaction should not be included in the outcome model. {p_end}
 
-{synopt:{opt cxa}}specify that treatment-covariate interactions should be included in all models. {p_end}
+{synopt:{opt cxd}}specify that treatment-covariate interactions should be included in all models. {p_end}
 
 {synopt:{opt cxm}}specify that mediator-covariate interactions should be included in the outcome model. {p_end}
 
@@ -81,7 +91,7 @@ Options are {opt reg:ress}, {opt log:it}, or {opt poi:sson}.{p_end}
 
 {synopt:{opt seed(passthru)}}specify the seed for bootstrap resampling. {p_end}
 
-{synopt:{opt detail}}print the fitted models for the mediator and outcome in addition to the effect estimates. {p_end}
+{synopt:{opt detail}}print the fitted models for the exposure-induced confounders, mediator, and outcome. {p_end}
 
 {synoptline}
 {p2colreset}{...}
@@ -112,19 +122,19 @@ direct effect.
 
 {pstd} no interaction between treatment and mediator, percentile bootstrap CIs with default settings: {p_end}
  
-{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit) nointer nsim(200) reps(200)} {p_end}
+{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539) cvars(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit) nointer nsim(200) reps(200)} {p_end}
 
 {pstd} treatment-mediator interaction, percentile bootstrap CIs with default settings: {p_end}
  
-{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit) nsim(200) reps(200)} {p_end}
+{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539) cvars(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit) nsim(200) reps(200)} {p_end}
 
 {pstd} treatment-mediator interaction, all two-way interactions, percentile bootstrap CIs with default settings: {p_end}
  
-{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit) cxd cxm lxm nsim(200) reps(200)} {p_end}
+{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539) cvars(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit) cxd cxm lxm nsim(200) reps(200)} {p_end}
 
 {pstd} treatment-mediator interaction, multiple exposure-induced confounders, percentile bootstrap CIs with default settings: {p_end}
  
-{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvar(ever_unemp_age3539 cesd_94) cvar(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lreg(logit regress) nsim(200) reps(200)} {p_end}
+{phang2}{cmd:. ventsim std_cesd_age40, dvar(att22) mvar(faminc_adj_age3539) lvars(ever_unemp_age3539 cesd_94) cvars(female black hispan paredu parprof parinc_prank famsize afqt3) d(1) dstar(0) m(10.5) mreg(regress) yreg(regress) lregs(logit regress) nsim(200) reps(200)} {p_end}
 
 
 {title:Saved results}

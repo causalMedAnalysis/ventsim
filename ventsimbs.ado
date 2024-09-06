@@ -8,18 +8,18 @@ program define ventsimbs, rclass
 	
 	version 15	
 
-	syntax varname(numeric) [if][in] [pweight], ///
+	syntax varlist(min=1 max=1 numeric) [if][in] [pweight], ///
 		dvar(varname numeric) ///
 		mvar(varname numeric) ///
-		lvar(varlist numeric) ///
+		lvars(varlist numeric) ///
 		d(real) ///
 		dstar(real) ///
 		m(real) ///
 		mreg(string) ///
 		yreg(string) ///
-		lreg(string) ///
+		lregs(string) ///
 		[nsim(integer 200)] ///
-		[cvar(varlist numeric)] ///
+		[cvars(varlist numeric)] ///
 		[NOINTERaction] ///
 		[cxd] ///
 		[cxm] ///
@@ -37,11 +37,11 @@ program define ventsimbs, rclass
 	/***********************************************************
     CHECK IF NUM OF VARS IN LVAR MATCHES NUM OF COMMANDS IN LREG
 	************************************************************/
-    local numlvars = wordcount("`lvar'")
-    local numlregs = wordcount("`lreg'")
+    local numlvars = wordcount("`lvars'")
+    local numlregs = wordcount("`lregs'")
 
     if `numlvars' != `numlregs' {
-        di as err "The number of variables in lvar must match the number of commands in lreg."
+        di as err "The number of variables in lvars must match the number of commands in lregs."
         exit 198
 		}
 	
@@ -54,9 +54,6 @@ program define ventsimbs, rclass
 		display as error "Error: yreg must be chosen from: `yregtypes'."
 		error 198		
 		}
-	else {
-		local yreg : word `nyreg' of `yregtypes'
-		}	
 
 	local mregtypes regress logit poisson
 	local nmreg : list posof "`mreg'" in mregtypes
@@ -64,14 +61,11 @@ program define ventsimbs, rclass
 		display as error "Error: mreg must be chosen from: `mregtypes'."
 		error 198		
 		}
-	else {
-		local mreg : word `nmreg' of `mregtypes'
-		}	
 
 	local lregtypes regress logit poisson
 	
 	local i = 0
-	foreach l in `lreg' {
+	foreach l in `lregs' {
 		local i = `i' + 1
 		local nlreg : list posof "`l'" in lregtypes
 		if !`nlreg' {
@@ -132,7 +126,7 @@ program define ventsimbs, rclass
 		}
 
 	if ("`cxd'"!="") {	
-		foreach c in `cvar' {
+		foreach c in `cvars' {
 			tempvar `dvar'X`c'
 			gen ``dvar'X`c'' = `dvar' * `c' if `touse'
 			local cxd_vars `cxd_vars'  ``dvar'X`c''
@@ -140,7 +134,7 @@ program define ventsimbs, rclass
 		}
 
 	if ("`cxm'"!="") {	
-		foreach c in `cvar' {
+		foreach c in `cvars' {
 			tempvar `mvar'X`c'
 			gen ``mvar'X`c'' = `mvar' * `c' if `touse'
 			local cxm_vars `cxm_vars'  ``mvar'X`c''
@@ -148,7 +142,7 @@ program define ventsimbs, rclass
 		}
 
 	if ("`lxm'"!="") {	
-		foreach l in `lvar' {
+		foreach l in `lvars' {
 			tempvar `mvar'X`l'
 			gen ``mvar'X`l'' = `mvar' * `l' if `touse'
 			local lxm_vars `lxm_vars'  ``mvar'X`l''
@@ -164,7 +158,7 @@ program define ventsimbs, rclass
 	tempvar `mvar'_orig
 	qui gen ``mvar'_orig' = `mvar' if `touse'
 
-	foreach l in `lvar' {
+	foreach l in `lvars' {
 		tempvar `l'_orig
 		qui gen ``l'_orig' = `l' if `touse'
 		}
@@ -175,19 +169,19 @@ program define ventsimbs, rclass
 	local priorVars = ""
 	forval i = 1/`numlvars' {
 		
-		local currentVar = word("`lvar'", `i')
-		local currentReg = word("`lreg'", `i')
+		local currentVar = word("`lvars'", `i')
+		local currentReg = word("`lregs'", `i')
 	
-		`currentReg' `currentVar' `dvar' `cvar' `cxd_vars' `priorVars' [`weight' `exp'] if `touse'
+		`currentReg' `currentVar' `dvar' `cvars' `cxd_vars' `priorVars' [`weight' `exp'] if `touse'
 		est store L`i'model_r001
 		
 		local prioVars "`priorVars' `currentVar'"
         }
 		
-	`mreg' `mvar' `dvar' `cvar' `cxd_vars' [`weight' `exp'] if `touse'
+	`mreg' `mvar' `dvar' `cvars' `cxd_vars' [`weight' `exp'] if `touse'
 	est store Mmodel_r001
 	
-	`yreg' `yvar' `mvar' `dvar' `inter' `cvar' `lvar' `cxd_vars' `cxm_vars' `lxm_vars' [`weight' `exp'] if `touse'
+	`yreg' `yvar' `mvar' `dvar' `inter' `cvars' `lvars' `cxd_vars' `cxm_vars' `lxm_vars' [`weight' `exp'] if `touse'
 	est store Ymodel_r001
 	
 	/**************************
@@ -201,13 +195,13 @@ program define ventsimbs, rclass
 		
 			est restore L`j'model_r001
 
-			local currentVar = word("`lvar'", `j')
-			local currentReg = word("`lreg'", `j')
+			local currentVar = word("`lvars'", `j')
+			local currentReg = word("`lregs'", `j')
 			
 			replace `dvar'=`d' if `touse'
 			
 			if ("`cxd'"!="") {	
-				foreach c in `cvar' {
+				foreach c in `cvars' {
 					replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 					}
 				}
@@ -238,7 +232,7 @@ program define ventsimbs, rclass
 			replace `dvar'=`dstar' if `touse'
 			
 			if ("`cxd'"!="") {	
-				foreach c in `cvar' {
+				foreach c in `cvars' {
 					replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 					}
 				}
@@ -277,7 +271,7 @@ program define ventsimbs, rclass
 		replace `dvar'=`d' if `touse'
 			
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 				}
 			}
@@ -300,7 +294,7 @@ program define ventsimbs, rclass
 		replace `dvar'=`dstar' if `touse'
 			
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 			}
 		}
@@ -333,24 +327,24 @@ program define ventsimbs, rclass
 			}
 				
 		forval j = 1/`numlvars' {
-			local currentVar = word("`lvar'", `j')
+			local currentVar = word("`lvars'", `j')
 			replace `currentVar' = L`j'd_r001_`i' if `touse'
 			}
 		
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 				}
 			}			
 			
 		if ("`cxm'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
 				}
 			}
 				
 		if ("`lxm'"!="") {	
-			foreach l in `lvar' {
+			foreach l in `lvars' {
 				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
 				}
 			}
@@ -378,24 +372,24 @@ program define ventsimbs, rclass
 			}
 			
 		forval j = 1/`numlvars' {
-			local currentVar = word("`lvar'", `j')
+			local currentVar = word("`lvars'", `j')
 			replace `currentVar' = L`j'dstar_r001_`i' if `touse'
 			}
 		
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 				}
 			}			
 			
 		if ("`cxm'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
 				}
 			}
 				
 		if ("`lxm'"!="") {	
-			foreach l in `lvar' {
+			foreach l in `lvars' {
 				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
 				}
 			}
@@ -423,24 +417,24 @@ program define ventsimbs, rclass
 			}
 			
 		forval j = 1/`numlvars' {
-			local currentVar = word("`lvar'", `j')
+			local currentVar = word("`lvars'", `j')
 			replace `currentVar' = L`j'd_r001_`i' if `touse'
 			}
 		
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 				}
 			}			
 			
 		if ("`cxm'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
 				}
 			}
 				
 		if ("`lxm'"!="") {	
-			foreach l in `lvar' {
+			foreach l in `lvars' {
 				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
 				}
 			}
@@ -468,24 +462,24 @@ program define ventsimbs, rclass
 			}
 				
 		forval j = 1/`numlvars' {
-			local currentVar = word("`lvar'", `j')
+			local currentVar = word("`lvars'", `j')
 			replace `currentVar' = L`j'd_r001_`i' if `touse'
 			}
 		
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 				}
 			}			
 			
 		if ("`cxm'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
 				}
 			}
 				
 		if ("`lxm'"!="") {	
-			foreach l in `lvar' {
+			foreach l in `lvars' {
 				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
 				}
 			}
@@ -512,12 +506,12 @@ program define ventsimbs, rclass
 			}
 				
 		forval j = 1/`numlvars' {
-			local currentVar = word("`lvar'", `j')
+			local currentVar = word("`lvars'", `j')
 			replace `currentVar' = L`j'dstar_r001_`i' if `touse'
 			}
 		
 		if ("`cxd'"!="") {	
-			foreach c in `cvar' {
+			foreach c in `cvars' {
 				replace ``dvar'X`c'' = `dvar' * `c' if `touse'
 				}
 			}			
@@ -546,7 +540,7 @@ program define ventsimbs, rclass
 	qui replace `dvar' = ``dvar'_orig' if `touse'
 	qui replace `mvar' = ``mvar'_orig' if `touse'
 	
-	foreach l in `lvar' {
+	foreach l in `lvars' {
 		qui replace `l' = ``l'_orig' if `touse'
 		}
 	
