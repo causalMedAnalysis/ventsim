@@ -86,4 +86,4 @@ Email: [wodtke@uchicago.edu](mailto:wodtke@uchicago.edu)
 
 ## Also See
 
-- Help: [regress R](#), [logit R](#), [poisson R](#), [bootstrap R](#)
+- Help: [regress](#), [logit](#), [poisson](#), [bootstrap](#)
