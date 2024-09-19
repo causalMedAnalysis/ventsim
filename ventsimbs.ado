@@ -135,17 +135,17 @@ program define ventsimbs, rclass
 
 	if ("`cxm'"!="") {	
 		foreach c in `cvars' {
-			tempvar `mvar'X`c'
-			gen ``mvar'X`c'' = `mvar' * `c' if `touse'
-			local cxm_vars `cxm_vars'  ``mvar'X`c''
+			tempvar mvarX`c'
+			gen `mvarX`c'' = `mvar' * `c' if `touse'
+			local cxm_vars `cxm_vars'  `mvarX`c''
 		}
 	}
 
 	if ("`lxm'"!="") {	
 		foreach l in `lvars' {
-			tempvar `mvar'X`l'
-			gen ``mvar'X`l'' = `mvar' * `l' if `touse'
-			local lxm_vars `lxm_vars'  ``mvar'X`l''
+			tempvar mvarX`l'
+			gen `mvarX`l'' = `mvar' * `l' if `touse'
+			local lxm_vars `lxm_vars'  `mvarX`l''
 		}
 	}
 	
@@ -345,13 +345,13 @@ program define ventsimbs, rclass
 			
 		if ("`cxm'"!="") {	
 			foreach c in `cvars' {
-				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
+				replace `mvarX`c'' = `mvar' * `c' if `touse'
 			}
 		}
 				
 		if ("`lxm'"!="") {	
 			foreach l in `lvars' {
-				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
+				replace `mvarX`l'' = `mvar' * `l' if `touse'
 			}
 		}
 		
@@ -390,13 +390,13 @@ program define ventsimbs, rclass
 			
 		if ("`cxm'"!="") {	
 			foreach c in `cvars' {
-				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
+				replace `mvarX`c'' = `mvar' * `c' if `touse'
 			}
 		}
 				
 		if ("`lxm'"!="") {	
 			foreach l in `lvars' {
-				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
+				replace `mvarX`l'' = `mvar' * `l' if `touse'
 			}
 		}
 		
@@ -435,13 +435,13 @@ program define ventsimbs, rclass
 			
 		if ("`cxm'"!="") {	
 			foreach c in `cvars' {
-				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
+				replace `mvarX`c'' = `mvar' * `c' if `touse'
 			}
 		}
 				
 		if ("`lxm'"!="") {	
 			foreach l in `lvars' {
-				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
+				replace `mvarX`l'' = `mvar' * `l' if `touse'
 			}
 		}
 		
@@ -480,13 +480,13 @@ program define ventsimbs, rclass
 			
 		if ("`cxm'"!="") {	
 			foreach c in `cvars' {
-				replace ``mvar'X`c'' = `mvar' * `c' if `touse'
+				replace `mvarX`c'' = `mvar' * `c' if `touse'
 			}
 		}
 				
 		if ("`lxm'"!="") {	
 			foreach l in `lvars' {
-				replace ``mvar'X`l'' = `mvar' * `l' if `touse'
+				replace `mvarX`l'' = `mvar' * `l' if `touse'
 			}
 		}
 		
