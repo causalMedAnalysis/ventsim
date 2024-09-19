@@ -8,18 +8,13 @@ package ^ventsim^ from https://github.com/causalMedAnalysis/ventsim
 {s6hlp}
 
 {smcl}
-{hilite:TITLE}{p 6 8}'VENTSIM': analysis of interventional effects using simulation and general linear models{p_end}
+{hilite:TITLE}{p 6 8}'VENTSIM': analysis of interventional direct and indirect effects using simulation and general linear models{p_end}
 {s6hlp}
 
 ^DESCRIPTION/AUTHOR(S)^
       
-ventsim is a stata module to estimate interventionl direct and indirect effects  using simulation and general linear models 
-for the mediator, outcome, and any exposure-induced confounders. Models for each of the exposure-induced confounders
-are estimated. Then, a model for the mediator conditional on treatment and baseline covariates (if specified) is estimated, 
-followed by a model for the outcome conditional on treatment, the mediator, the baseline covariates, and the exposure-induced
-confounders. These models may be linear, logistic, or poisson regressions. These models are then used to simulate potential 
-outcomes and construct estimates of the interventional direct and indirect effect, the overall effect, and the controlled 
-direct effect.
+ventsim is a module to estimate interventionl direct and indirect effects using simulation and general linear models 
+for the mediator, outcome, and any exposure-induced confounders.
       
       
 Requires: Stata version 15

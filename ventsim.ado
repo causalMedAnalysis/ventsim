@@ -18,25 +18,19 @@ program define ventsim, eclass
 		mreg(string) ///
 		yreg(string) ///
 		lregs(string) ///
-		[nsim(integer 200)] ///
-		[cvars(varlist numeric)] ///
-		[NOINTERaction] ///
-		[cxd] ///
-		[cxm] ///
-		[lxm] ///
-		[reps(integer 200)] ///
-		[strata(varname numeric)] ///
-		[cluster(varname numeric)] ///
-		[level(cilevel)] ///
-		[seed(passthru)] ///
-		[saving(string)] ///
-		[detail]
+		[nsim(integer 200) ///
+		cvars(varlist numeric) ///
+		NOINTERaction ///
+		cxd ///
+		cxm ///
+		lxm ///
+		detail * ]
 		
 	qui {
 		marksample touse
 		count if `touse'
 		if r(N) == 0 error 2000
-		}
+	}
 	
 	if ("`detail'" != "") {		
 		ventsimbs `varlist' [`weight' `exp'] if `touse' , ///
@@ -44,32 +38,20 @@ program define ventsim, eclass
 			d(`d') dstar(`dstar') m(`m') ///
 			mreg(`mreg') yreg(`yreg') lregs(`lregs') /// 
 			nsim(1) `nointeraction' `cxd' `cxm' `lxm'
-		}
+	}
 		
-	if ("`saving'" != "") {
-		bootstrap CDE=r(cde) IDE=r(ide) IIE=r(iie) OE=r(oe), force ///
-			reps(`reps') strata(`strata') cluster(`cluster') level(`level') `seed' ///
-			saving(`saving', replace) noheader notable: ///
-			ventsimbs `varlist' if `touse' [`weight' `exp'], ///
-			dvar(`dvar') mvar(`mvar') lvars(`lvars') cvars(`cvars') ///
-			d(`d') dstar(`dstar') m(`m') ///
-			mreg(`mreg') yreg(`yreg') lregs(`lregs') ///
-			nsim(`nsim') `nointeraction' `cxd' `cxm'
-			}
-
-	if ("`saving'" == "") {
-		bootstrap CDE=r(cde) IDE=r(ide) IIE=r(iie) OE=r(oe), force ///
-			reps(`reps') strata(`strata') cluster(`cluster') level(`level') `seed' ///
-			noheader notable: ///
-			ventsimbs `varlist' if `touse' [`weight' `exp'], ///
-			dvar(`dvar') mvar(`mvar') lvars(`lvars') cvars(`cvars') ///
-			d(`d') dstar(`dstar') m(`m') ///
-			mreg(`mreg') yreg(`yreg') lregs(`lregs') ///
-			nsim(`nsim') `nointeraction' `cxd' `cxm'
-			}
+	bootstrap ///
+		OE=r(oe) ///
+		IDE=r(ide) ///
+		IIE=r(iie) ///
+		CDE=r(cde), ///
+			force `options' noheader notable: ///
+				ventsimbs `varlist' if `touse' [`weight' `exp'], ///
+					dvar(`dvar') mvar(`mvar') lvars(`lvars') cvars(`cvars') ///
+					d(`d') dstar(`dstar') m(`m') ///
+					mreg(`mreg') yreg(`yreg') lregs(`lregs') ///
+					nsim(`nsim') `nointeraction' `cxd' `cxm'
 
 	estat bootstrap, p noheader
-	
-	di as txt "CDE: controlled direct effect at m=`m'"
 	
 end ventsim

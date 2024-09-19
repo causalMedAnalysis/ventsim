@@ -1,12 +1,7 @@
-d 'VENTSIM': analysis of interventional effects using simulation and general linear models
+d 'VENTSIM': analysis of interventional direct and indirect effects using simulation and general linear models
 d
-d estimates interventionl direct and indirect effects  using simulation and general linear models 
-d for the mediator, outcome, and any exposure-induced confounders. Models for each of the exposure-induced confounders
-d are estimated. Then, a model for the mediator conditional on treatment and baseline covariates (if specified) is estimated, 
-d followed by a model for the outcome conditional on treatment, the mediator, the baseline covariates, and the exposure-induced
-d confounders. These models may be linear, logistic, or poisson regressions. These models are then used to simulate potential 
-d outcomes and construct estimates of the interventional direct and indirect effect, the overall effect, and the controlled 
-d direct effect.
+d ventsim estimates interventionl direct and indirect effects using simulation and general linear models 
+d for the mediator, outcome, and any exposure-induced confounders.
 d      
 d
 d Requires: Stata version 15
